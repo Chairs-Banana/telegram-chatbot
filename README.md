@@ -130,26 +130,87 @@ curl "https://api.telegram.org/bot<TOKEN>/setWebhook?url=https://<PROJECT>.verce
 
 Ganti `<TOKEN>` dengan bot token dan `<PROJECT>` dengan nama project Vercel.
 
-### 5. Aktifkan Cron Job
+### 5. Setup Cron Job
 
-Buka **Vercel Dashboard → Project → Settings → Crons** — pastikan cron `/api/cron` terdaftar dengan jadwal `* * * * *` (setiap menit).
+Cron digunakan untuk mengecek jadwal yang sudah waktunya dan mengirim notifikasi ke user.
 
-### 6. Test Cron Manual
+#### Opsi A: Vercel Cron (Hobby Plan — 1x sehari)
 
-Buka browser atau curl untuk test cron berjalan:
+Konfigurasi sudah ada di `vercel.json`:
+
+```json
+"crons": [
+  {
+    "path": "/api/cron",
+    "schedule": "0 9 * * *"
+  }
+]
+```
+
+Ini akan jalan setiap hari jam 09:00 UTC (16:00 WIB). Cukup untuk jadwal harian.
+
+#### Opsi B: cron-job.org (Gratis — setiap 1 menit)
+
+Untuk notifikasi lebih cepat, pakai layanan cron eksternal:
+
+1. Daftar di [cron-job.org](https://cron-job.org)
+2. Klik **Create cronjob**
+3. Isi:
+   - **URL**: `https://<PROJECT>.vercel.app/api/cron?debug=true`
+   - **Schedule**: Every 1 minute
+4. Klik **Save & Enable**
+
+### 6. Test Cron
+
+#### Test dari Browser
+
+Buka URL ini di browser:
 
 ```
 https://<PROJECT>.vercel.app/api/cron?debug=true
 ```
 
-Ini akan menjalankan cron tanpa auth dan mengembalikan JSON hasilnya. Pastikan ada jadwal yang sudah lewat waktunya untuk ditest.
+Response yang benar:
+
+```json
+{
+  "ok": true,
+  "processed": 0,
+  "results": []
+}
+```
+
+- `processed: 0` = tidak ada jadwal yang due (normal jika belum ada jadwal lewat)
+- `processed: 1` = ada 1 jadwal yang dikirim notifikasinya
+
+#### Test dari CLI
+
+```bash
+curl "https://<PROJECT>.vercel.app/api/cron?debug=true"
+```
+
+#### Test dengan Jadwal Due
+
+1. Buat jadwal dengan waktu yang sudah lewat via bot:
+   ```
+   /add Test Notif | 2024-01-01 00:00
+   ```
+2. Buka `https://<PROJECT>.vercel.app/api/cron?debug=true`
+3. Cek response — `processed` harus `1`
+4. Cek Telegram — notifikasi harus masuk
+
+#### Test Lokal
+
+```bash
+npm run test:cron
+```
 
 ## Cara Kerja
 
 ```
 User kirim pesan → Telegram → Vercel Webhook (/api/webhook) → Bot proses → Simpan ke Supabase
 
-Vercel Cron (setiap menit) → /api/cron → Cek jadwal due → Kirim notifikasi ke user
+Cron (Vercel/cron-job.org) → /api/cron → Cek jadwal due → Kirim notifikasi ke user
 ```
 
 1. **Webhook**: Menerima update dari Telegram dan memproses command
