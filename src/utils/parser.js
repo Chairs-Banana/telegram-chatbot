@@ -1,5 +1,5 @@
 const { parse, isValid } = require("date-fns");
-const { formatInTimeZone, toZonedTime } = require("date-fns-tz");
+const { formatInTimeZone, fromZonedTime } = require("date-fns-tz");
 
 const TIMEZONE = process.env.TIMEZONE || "Asia/Jakarta";
 
@@ -103,6 +103,7 @@ function parseDeleteInput(text) {
 
 /**
  * Parse date-time string with multiple format support
+ * Input is treated as being in TIMEZONE, then converted to UTC for storage
  */
 function parseDateTime(str) {
   if (!str) return null;
@@ -118,8 +119,8 @@ function parseDateTime(str) {
   for (const fmt of formats) {
     const parsed = parse(str.trim(), fmt, new Date());
     if (isValid(parsed)) {
-      // Convert to target timezone
-      return toZonedTime(parsed, TIMEZONE);
+      // Treat input as TIMEZONE, convert to UTC
+      return fromZonedTime(parsed, TIMEZONE);
     }
   }
 
