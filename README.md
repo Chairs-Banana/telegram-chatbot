@@ -1,24 +1,24 @@
-# 🤖 Telegram Schedule Bot
+# Telegram Schedule Bot
 
 Bot Telegram untuk mengelola jadwal dengan notifikasi otomatis. Dibangun dengan Node.js, Telegraf, Drizzle ORM, dan Supabase. Deploy di Vercel.
 
 ## Fitur
 
-- ✅ Tambah, edit, hapus jadwal
-- 📋 Lihat daftar jadwal
-- ⏰ Notifikasi otomatis saat jadwal tiba
-- 🕐 Support timezone (default: Asia/Jakarta)
-- 🚀 Deploy serverless di Vercel
+- Tambah, edit, hapus jadwal
+- Lihat daftar jadwal
+- Notifikasi otomatis saat jadwal tiba
+- Support timezone (default: Asia/Jakarta)
+- Deploy serverless di Vercel
 
 ## Tech Stack
 
-| Layer | Teknologi |
-|-------|-----------|
-| Runtime | Node.js |
-| Bot Framework | Telegraf |
-| Database | Supabase (PostgreSQL) |
-| ORM | Drizzle ORM |
-| Deployment | Vercel (Serverless + Cron) |
+| Layer         | Teknologi                  |
+| ------------- | -------------------------- |
+| Runtime       | Node.js                    |
+| Bot Framework | Telegraf                   |
+| Database      | Supabase (PostgreSQL)      |
+| ORM           | Drizzle ORM                |
+| Deployment    | Vercel (Serverless + Cron) |
 
 ## Struktur Project
 
@@ -47,15 +47,15 @@ Bot Telegram untuk mengelola jadwal dengan notifikasi otomatis. Dibangun dengan 
 
 ## Perintah Bot
 
-| Perintah | Fungsi | Contoh |
-|----------|--------|--------|
-| `/start` | Mulai menggunakan bot | `/start` |
-| `/help` | Tampilkan bantuan | `/help` |
-| `/add` | Tambah jadwal baru | `/add Rapat Tim \| 2024-12-25 10:00` |
-| `/add` | Dengan deskripsi | `/add Rapat Tim \| Diskusi budget \| 2024-12-25 10:00` |
-| `/list` | Lihat semua jadwal | `/list` |
-| `/edit` | Edit jadwal | `/edit <id> \| Judul Baru \| 2024-12-26 14:00` |
-| `/delete` | Hapus jadwal | `/delete <id>` |
+| Perintah  | Fungsi                | Contoh                                                 |
+| --------- | --------------------- | ------------------------------------------------------ |
+| `/start`  | Mulai menggunakan bot | `/start`                                               |
+| `/help`   | Tampilkan bantuan     | `/help`                                                |
+| `/add`    | Tambah jadwal baru    | `/add Rapat Tim \| 2024-12-25 10:00`                   |
+| `/add`    | Dengan deskripsi      | `/add Rapat Tim \| Diskusi budget \| 2024-12-25 10:00` |
+| `/list`   | Lihat semua jadwal    | `/list`                                                |
+| `/edit`   | Edit jadwal           | `/edit <id> \| Judul Baru \| 2024-12-26 14:00`         |
+| `/delete` | Hapus jadwal          | `/delete <id>`                                         |
 
 Format tanggal: `YYYY-MM-DD HH:mm`
 
@@ -150,16 +150,16 @@ Vercel Cron (setiap menit) → /api/cron → Cek jadwal due → Kirim notifikasi
 
 Tabel `schedules`:
 
-| Kolom | Tipe | Keterangan |
-|-------|------|------------|
-| `id` | UUID | Primary key |
-| `chat_id` | BIGINT | ID chat Telegram |
-| `title` | VARCHAR(255) | Judul jadwal |
-| `description` | TEXT | Deskripsi (opsional) |
-| `schedule_at` | TIMESTAMP | Waktu jadwal |
-| `is_notified` | BOOLEAN | Status notifikasi |
-| `created_at` | TIMESTAMP | Waktu dibuat |
-| `updated_at` | TIMESTAMP | Terakhir diupdate |
+| Kolom         | Tipe         | Keterangan           |
+| ------------- | ------------ | -------------------- |
+| `id`          | UUID         | Primary key          |
+| `chat_id`     | BIGINT       | ID chat Telegram     |
+| `title`       | VARCHAR(255) | Judul jadwal         |
+| `description` | TEXT         | Deskripsi (opsional) |
+| `schedule_at` | TIMESTAMP    | Waktu jadwal         |
+| `is_notified` | BOOLEAN      | Status notifikasi    |
+| `created_at`  | TIMESTAMP    | Waktu dibuat         |
+| `updated_at`  | TIMESTAMP    | Terakhir diupdate    |
 
 ## License
 
