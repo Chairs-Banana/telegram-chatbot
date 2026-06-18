@@ -31,12 +31,21 @@ async function sendTelegramMessage(chatId, text) {
 }
 
 module.exports = async (req, res) => {
-  // Verify cron secret (Vercel sends this in header)
-  const authHeader = req.headers.authorization;
-  if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
-    // Also allow from Vercel Cron
-    const cronHeader = req.headers["vercel-cron"];
-    if (!cronHeader) {
+  // Only allow POST or GET
+  if (!["POST", "GET"].includes(req.method)) {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  // Debug mode: ?debug=true bypasses auth (for manual testing)
+  const isDebug = req.query.debug === "true";
+
+  // Verify cron secret
+  if (CRON_SECRET && !isDebug) {
+    const authHeader = req.headers.authorization || "";
+    const isValid = authHeader === `Bearer ${CRON_SECRET}`;
+
+    if (!isValid) {
+      console.log("[CRON] Unauthorized. Header:", authHeader);
       return res.status(401).json({ error: "Unauthorized" });
     }
   }
@@ -45,7 +54,7 @@ module.exports = async (req, res) => {
     // Get all schedules that are due
     const dueSchedules = await getDueSchedules();
 
-    console.log(`Found ${dueSchedules.length} due schedules`);
+    console.log(`[CRON] Found ${dueSchedules.length} due schedules`);
 
     const results = [];
 
@@ -55,8 +64,9 @@ module.exports = async (req, res) => {
         await sendTelegramMessage(schedule.chatId, message);
         await markAsNotified(schedule.id);
         results.push({ id: schedule.id, status: "sent" });
+        console.log(`[CRON] Notification sent for schedule ${schedule.id}`);
       } catch (error) {
-        console.error(`Failed to send notification for schedule ${schedule.id}:`, error);
+        console.error(`[CRON] Failed for schedule ${schedule.id}:`, error.message);
         results.push({ id: schedule.id, status: "error", error: error.message });
       }
     }
@@ -67,7 +77,7 @@ module.exports = async (req, res) => {
       results,
     });
   } catch (error) {
-    console.error("Cron job error:", error);
+    console.error("[CRON] Job error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

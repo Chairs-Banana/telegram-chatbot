@@ -134,6 +134,16 @@ Ganti `<TOKEN>` dengan bot token dan `<PROJECT>` dengan nama project Vercel.
 
 Buka **Vercel Dashboard → Project → Settings → Crons** — pastikan cron `/api/cron` terdaftar dengan jadwal `* * * * *` (setiap menit).
 
+### 6. Test Cron Manual
+
+Buka browser atau curl untuk test cron berjalan:
+
+```
+https://<PROJECT>.vercel.app/api/cron?debug=true
+```
+
+Ini akan menjalankan cron tanpa auth dan mengembalikan JSON hasilnya. Pastikan ada jadwal yang sudah lewat waktunya untuk ditest.
+
 ## Cara Kerja
 
 ```

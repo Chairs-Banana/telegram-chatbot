@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node src/bot.js",
     "start": "node src/bot.js",
+    "test:cron": "node scripts/test-cron.js",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
